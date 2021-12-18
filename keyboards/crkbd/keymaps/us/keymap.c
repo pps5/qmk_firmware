@@ -201,6 +201,11 @@ void mod_tap_action(bool *flag, uint8_t layer, keyrecord_t *record, void (*cb)(v
         *flag = true;
         layer_on(layer);
         update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
+
+        if (layer_state_is(LAYER_ADJUST)) {
+            lower_pressed = false;
+            raise_pressed = false;
+        }
     } else {
         layer_off(layer);
         update_tri_layer(LAYER_LOWER, LAYER_RAISE, LAYER_ADJUST);
