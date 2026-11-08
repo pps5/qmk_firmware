@@ -11,23 +11,22 @@
 enum custom_keycodes {
     CK_LOWER = SAFE_RANGE,
     CK_RAISE,
-    CK_MOUSE,
     CK_SFESC = RSFT_T(KC_ESC)
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [LAYER_DEFAULT] = LAYOUT(
-        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_VOLU, CK_MOUSE, KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-        KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_VOLD,  KC_MINS, KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_MPLY, XXXXXXX,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, CK_SFESC,
-                                   KC_LALT, KC_LGUI, CK_LOWER, KC_ENT,  KC_SPC, CK_RAISE,  KC_RALT,  KC_RGUI
+        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,     KC_VOLU, KC_BRIU,  KC_Y,     KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
+        KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,     KC_VOLD, KC_BRID,  KC_H,     KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,     KC_MPLY, KC_TOGG,  KC_N,     KC_M,    KC_COMM, KC_DOT,  KC_SLSH, CK_SFESC,
+                                   KC_LALT, KC_LGUI, CK_LOWER, KC_ENT,  KC_SPC,   CK_RAISE, KC_RALT, KC_RGUI
     ),
 
     [LAYER_LOWER] = LAYOUT(
-        _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    _______, _______, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    _______,
-        _______, _______, KC_PGDN, KC_UP,   KC_PGUP, _______, _______, _______, KC_LEFT, KC_DOWN, KC_UP,  KC_RIGHT, KC_MINS, _______,
-        _______, _______, KC_LEFT, KC_DOWN, KC_RIGHT,_______, _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END, _______, _______,
+        _______, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    _______, _______, KC_6,    KC_7,    KC_8,    KC_9,     KC_0,    _______,
+        _______, _______, KC_PGDN, KC_UP,   KC_PGUP, _______, _______, _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, KC_MINS, _______,
+        _______, _______, KC_LEFT, KC_DOWN, KC_RIGHT,_______, _______, _______, KC_HOME, KC_PGDN, KC_PGUP, KC_END,   _______, _______,
                                    _______, _______, _______, _______, _______, _______, _______, _______
     ),
 
@@ -94,6 +93,14 @@ void mouse_key_action(bool *flag, keyrecord_t *record) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // Avoid sending KC_SHIFT right after KC_UNDS
+    if (keycode == KC_UNDS) {
+        if (record->event.pressed) {
+            tap_code16(KC_UNDS);
+        }
+        return false;
+    }
+
     switch (keycode) {
         case CK_LOWER:
             mod_tap_action(&lower_pressed, LAYER_LOWER, record, set_eisu);
@@ -102,11 +109,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case CK_RAISE:
             mod_tap_action(&raise_pressed, LAYER_RAISE, record, set_kana);
-            return false;
-            break;
-
-        case CK_MOUSE:
-            mouse_key_action(&lower_pressed, record);
             return false;
             break;
 
